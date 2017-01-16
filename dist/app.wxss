@@ -1,0 +1,11 @@
+.container {
+  display: -ms-flexbox;
+  display: flex;
+  padding: 200rpx 0;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+}

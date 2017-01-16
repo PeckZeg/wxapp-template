@@ -1,0 +1,86 @@
+---
+  yaml:
+    build:
+      files:
+        - expand: true
+          cwd: src/
+          src:
+            - "**/*.yaml"
+          dest: dist/
+
+  babel:
+    build:
+      options:
+        presets:
+          - babel-preset-es2015
+        plugins:
+          - transform-remove-strict-mode
+      files:
+        - expand: true
+          cwd: src/
+          src:
+            - "**/*.js"
+          dest: dist/
+
+  pug:
+    build:
+      options:
+        pretty: true
+      files:
+        - expand: true
+          cwd: src/
+          src:
+            - "**/*.pug"
+          dest: dist/
+          ext: .wxml
+
+  compass:
+    build:
+      options:
+        noLineComments: true
+        sassDir: src
+        cssDir: build
+
+  autoprefixer:
+    build:
+      options:
+        browsers:
+          - last 2 versions
+      files:
+        - expand: true
+          cwd: build/
+          src:
+            - "**/*.css"
+          dest: dist/
+          ext: '.wxss'
+
+  clean:
+    build:
+      - build/
+
+  watch:
+    yaml:
+      files:
+        - src/**/*.yaml
+      tasks:
+        - yaml:build
+
+    js:
+      files:
+        - src/**/*.js
+      tasks:
+        - babel:build
+
+    pug:
+      files:
+        - "src/**/*.pug"
+      tasks:
+        - pug:build
+
+    scss:
+      files:
+        - src/**/*.scss
+      tasks:
+        - compass:build
+        - autoprefixer:build
+        - clean:build

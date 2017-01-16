@@ -1,0 +1,10 @@
+view.container
+    view.userinfo(bindtap="bindViewTap")
+      image.userinfo-avatar(
+        src="{{ userInfo.avatarUrl }}"
+        background-size="cover"
+      )
+        text.userinfo-nickname {{ userInfo.nickName }}
+
+    view.usermotto
+      tect.user-motto {{ motto }}
