@@ -1,0 +1,85 @@
+//
+//  Mixins - Rpx
+//  --------------------------------------------------
+
+$rpx-base-draft:                iphone6 !default;
+
+@function rpx-baseline($base-draft: $rpx-base-draft) {
+  @if $base-draft == iphone5 {
+    @return 2.34rpx;
+  }
+
+  @else if $base-draft == iphone6 {
+    @return 2rpx;
+  }
+
+  @else if $base-draft == iphone6 plus {
+    @return 1.81rpx;
+  }
+}
+
+@function rpx-separator($list, $separator: flase) {
+  @if $separator == 'comma' or $separator == 'space' {
+    @return append($list, null, $separator);
+  }
+
+  @if function-exists('list-separator') == true {
+    @return list-separator($list);
+  }
+
+  // list-separator polyfill by Hugo Giraudel (https://sass-compatibility.github.io/#list_separator_function)
+  $test-list: ();
+
+  @each $item in $list {
+    $test-list: append($test-list, $item, space);
+  }
+
+  @return if($test-list == $list, space, comma);
+}
+
+@function rpx-convert($to, $values...) {
+  $result: ();
+  $separator: rpx-separator($values);
+  $rpx-baseline: rpx-baseline();
+
+  @each $value in $values {
+    @if type-of($value) == 'number' and unit($value) == 'rpx' and $to == 'px' {
+      $result: append($result, $value / 1rpx * $rpx-baseline + 0px, $separator);
+    }
+
+    @else if type-of($value) == 'number' and unit($value) == 'px' and $to = 'rpx' {
+      $result: append($result, $value / $rpx-baseline + 0rpx, $separator);
+    }
+
+    @else if type-of($value) == 'list' {
+      $value-separator: rpx-separator($value);
+      $value: rpx-convert($to, $value...);
+      $value: rpx-separator($value, $value-separator);
+      $result: append($result, $value, $separator);
+    }
+
+    @else {
+      $result: append($result, $value, $separator);
+    }
+  }
+
+  @return if(length($list) == 1, nth($result, 1), $result);
+}
+
+@function rpx($values...) {
+  @return rpx-convert(rpx, $values...);
+}
+
+@mixin rpx($properties, $values...) {
+  @if type-of($properties) == 'map' {
+    @each $property in map-keys($properties) {
+      @include rpx($property, map-get($properties, $property));
+    }
+  }
+
+  @else {
+    @each $property in $properties {
+      #{$property}: rpx-convert(rpx, $values...);
+    }
+  }
+}
